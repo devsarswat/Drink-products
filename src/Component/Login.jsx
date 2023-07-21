@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { TextField, Button, Typography } from "@mui/material";
 import validator from "validator";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Config from "../Config";
 import { toast } from 'react-toastify';
+import bcrypt from "bcryptjs"; 
 
 const Login = () => {
   const { setisLogin, setuser } = useContext(Acontext);
@@ -14,18 +15,12 @@ const Login = () => {
   const [formData, setFormData] = useState(data);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("userid"));
-    if (storedUser) {
-      setuser(storedUser);
-      setisLogin(storedUser);
-    }
-  }, [setuser, setisLogin]);
 
   const handleValue = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -40,16 +35,24 @@ const Login = () => {
               (user) => user.email === formData.email
             );
             if (matchingUser) {
-              if (matchingUser.password === formData.password) {
-                setuser(matchingUser);
-                toast.success("Login Successful");
-                setFormData(data);
-                setisLogin(matchingUser);
-                navigate("/");
-                localStorage.setItem("userid", JSON.stringify(matchingUser));
-              } else {
-                toast.error("Invalid password. Please try again.");
-              }
+              // Use bcrypt's compare function to check if the entered password matches the hashed password
+              bcrypt.compare(formData.password, matchingUser.password, (err, result) => {
+                if (err) {
+                  console.error("Error comparing passwords:", err);
+                  return;
+                }
+
+                if (result) {
+                  setuser(matchingUser);
+                  toast.success("Login Successful");
+                  setFormData(data);
+                  setisLogin(matchingUser);
+                  navigate("/");
+                  localStorage.setItem("userid", JSON.stringify(matchingUser));
+                } else {
+                  toast.error("Invalid password. Please try again.");
+                }
+              });
             } else {
               toast.error("Invalid email. Please try again.");
             }
@@ -80,6 +83,7 @@ const Login = () => {
 
     return errors;
   };
+
 
   return (
     <div className="container">

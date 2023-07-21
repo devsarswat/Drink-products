@@ -4,7 +4,8 @@ import { TextField, Button, Typography } from "@mui/material";
 import validator from "validator";
 import { useNavigate } from "react-router-dom";
 import Config from "../Config";
-import {  toast } from 'react-toastify'
+import { toast } from "react-toastify";
+import bcrypt from "bcryptjs"; 
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -30,18 +31,37 @@ const Signin = () => {
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length === 0) {
-      axios
-        // .post("http://192.168.0.173:4000/register", formData)
-        .post(Config.apikeyuserdata, formData)
-        .then((res) => {
-          console.log(res.data);
-          toast.success("Registration Successfully");
-          navigate("/login");
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error("Please Try Again");
+      // Encrypt passwords before posting using bcryptjs
+      bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+          console.error("Error generating salt:", err);
+          return;
+        }
+        bcrypt.hash(formData.password, salt, (err, hashedPassword) => {
+          if (err) {
+            console.error("Error hashing password:", err);
+            return;
+          }
+
+          const formDataWithEncryptedPasswords = {
+            ...formData,
+            password: hashedPassword,
+            confirmpassword: hashedPassword, // You can remove this line if you don't want to send confirm password
+          };
+
+          axios
+            .post(Config.apikeyuserdata, formDataWithEncryptedPasswords)
+            .then((res) => {
+              console.log(res.data);
+              toast.success("Registration Successfully");
+              navigate("/login");
+            })
+            .catch((error) => {
+              console.log(error);
+              toast.error("Please Try Again");
+            });
         });
+      });
     } else {
       setErrors(validationErrors);
     }
