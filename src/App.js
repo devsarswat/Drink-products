@@ -15,6 +15,7 @@ import OrderHistory from "./Component/OrderHistory";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from "./Component/Action/Loading";
+import Settings from "./Component/Settings";
 export const Acontext = createContext();
 
 const App = () => {
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/productdetail" element={<ProductDetail />} />
+        <Route path="/setting" element={<Settings />} />
       </Routes>
     </Acontext.Provider>
       )}
