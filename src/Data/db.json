@@ -907,14 +907,6 @@
       "phone": "0123456789",
       "zipCode": "1234",
       "address": "Bikaner"
-    },
-    {
-      "name": "ajay",
-      "email": "ajaykumar@gmail.com",
-      "password": "$2a$10$Ol3dqZZMzHez1nNCaCWQNudBxIQiJvh2FZO9nrFZIVl.KO5C3nMfq",
-      "confirmpassword": "$2a$10$Ol3dqZZMzHez1nNCaCWQNudBxIQiJvh2FZO9nrFZIVl.KO5C3nMfq",
-      "role": "user",
-      "id": 2
     }
   ]
 }

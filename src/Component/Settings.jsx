@@ -45,16 +45,16 @@ const Settings = () => {
   
       await axios.delete(`${Config.apikeyuserdata}/${user.id}`);
       setMessage('Account deleted successfully.');
-      setCurrentPasswordCorrect(false);
-      setDeleteAccount(false);
-      setisLogin(localStorage.removeItem('userid'));
+      setisLogin(localStorage.removeItem('userid'))
+      setisLogin(false); 
       setuser(null);
-      nevigate("/")
+      nevigate("/");
     } catch (error) {
       setMessage('An error occurred while deleting the account.');
       console.error(error);
     }
   };
+  
 
   const handleSubmit = async () => {
     if (deleteAccount) {
