@@ -12,62 +12,93 @@ import Cart from "./Component/Cart";
 import Profile from "./Component/Profile";
 import ProductDetail from "./Component/ProductDetail";
 import OrderHistory from "./Component/OrderHistory";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Component/Action/Loading";
 import Settings from "./Component/Settings";
+import Config from "./Config";
+import axios from "axios";
 export const Acontext = createContext();
 
 const App = () => {
-  const udata = (() => {
+  const udata = () => {
     const storedUser = JSON.parse(localStorage.getItem("userid"));
     return storedUser ? storedUser : null;
-  });
-  const [search, setSearch] = useState('');
-  const[product,setproduct]=useState();
+  };
+  const [search, setSearch] = useState("");
+  const [product, setproduct] = useState();
   const [isLogin, setisLogin] = useState(udata);
   const [data, setdata] = useState(() => {
     const storedData = localStorage.getItem("productData");
     return storedData ? JSON.parse(storedData) : [];
   });
   const [cartItems, setCartItems] = useState([]);
-  const [user, setuser] = useState(udata);
-  console.log("user",user)
-  console.log("islogin",isLogin)
+  const [user, setuser] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
- 
 
   useEffect(() => {
     localStorage.setItem("productData", JSON.stringify(data));
     setTimeout(() => {
       setIsLoading(false);
-    },500);
+    }, 500);
   }, [data]);
-
+  useEffect(() => {
+    if (udata()) {
+      axios.get(`${Config.apikeyuserdata}/${udata()}`)
+        .then((res) => {
+          setuser(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+  }, [setuser]);
   
+
   return (
     <>
-    {isLoading ? (
+      {isLoading ? (
         <Loading />
       ) : (
-    <Acontext.Provider value={{ product,setproduct,search, setSearch, data, setdata, cartItems, setCartItems, isLogin, setisLogin, user, setuser}}>
-      <Navbar />
-      <ToastContainer position="top-center" autoClose={2000}/>
-      <Routes>
-        <Route path="/alldata" element={<GetData />} />
-        <Route path="/" element={<Product />} />
-        <Route path="/data" element={<Data />} />
-        <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
-        <Route path="/cart" element={<PrivateRoute element={<Cart />} />} />
-        <Route path="/order" element={<PrivateRoute element={<OrderHistory />} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/productdetail" element={<ProductDetail />} />
-        <Route path="/setting" element={<Settings />} />
-      </Routes>
-    </Acontext.Provider>
+        <Acontext.Provider
+          value={{
+            product,
+            setproduct,
+            search,
+            setSearch,
+            data,
+            setdata,
+            cartItems,
+            setCartItems,
+            isLogin,
+            setisLogin,
+            user,
+            setuser,
+          }}
+        >
+          <Navbar />
+          <ToastContainer position="top-center" autoClose={2000} />
+          <Routes>
+            <Route path="/alldata" element={<GetData />} />
+            <Route path="/" element={<Product />} />
+            <Route path="/data" element={<Data />} />
+            <Route
+              path="/profile"
+              element={<PrivateRoute element={<Profile />} />}
+            />
+            <Route path="/cart" element={<PrivateRoute element={<Cart />} />} />
+            <Route
+              path="/order"
+              element={<PrivateRoute element={<OrderHistory />} />}
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/productdetail" element={<ProductDetail />} />
+            <Route path="/setting" element={<Settings />} />
+          </Routes>
+        </Acontext.Provider>
       )}
-  </>
+    </>
   );
 };
 

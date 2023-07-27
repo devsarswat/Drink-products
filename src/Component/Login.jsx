@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import bcrypt from "bcryptjs"; 
 
 const Login = () => {
-  const { setisLogin, setuser } = useContext(Acontext);
+  const { setisLogin,setuser} = useContext(Acontext);
   const data = { email: "", password: "" };
   const [formData, setFormData] = useState(data);
   const [errors, setErrors] = useState({});
@@ -35,7 +35,6 @@ const Login = () => {
               (user) => user.email === formData.email
             );
             if (matchingUser) {
-              // Use bcrypt's compare function to check if the entered password matches the hashed password
               bcrypt.compare(formData.password, matchingUser.password, (err, result) => {
                 if (err) {
                   console.error("Error comparing passwords:", err);
@@ -43,12 +42,12 @@ const Login = () => {
                 }
 
                 if (result) {
-                  setuser(matchingUser);
                   toast.success("Login Successful");
+                  setuser(matchingUser)
                   setFormData(data);
-                  setisLogin(matchingUser);
+                  setisLogin(matchingUser.id);
                   navigate("/");
-                  localStorage.setItem("userid", JSON.stringify(matchingUser));
+                  localStorage.setItem("userid", JSON.stringify(matchingUser.id));
                 } else {
                   toast.error("Invalid password. Please try again.");
                 }
